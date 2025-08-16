@@ -19,6 +19,9 @@ app.post('/webhook', async (req, res) => {
       if (userMessage === 'こんにちは') {
         replyText = 'こんにちは！ごきげんいかがですか？';
       }
+      if (userMessage === 'こんばんは') {
+        replyText = 'こんばんは！おやすみなさい';
+      }
 
       try {
         await axios.post('https://api.line.me/v2/bot/message/reply', {
