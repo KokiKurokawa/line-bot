@@ -1,37 +1,45 @@
-require('dotenv').config();
 const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
+require('dotenv').config(); // .envファイルの読み込み
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json()); // LINEのWebhookはJSON形式
 
-app.post('/webhook', (req, res) => {
+
+app.post('/webhook', async (req, res) => {
   const events = req.body.events;
-  events.forEach(event => {
+
+  for (const event of events) {
     if (event.type === 'message' && event.message.type === 'text') {
       const replyToken = event.replyToken;
       const userMessage = event.message.text;
 
-      axios.post('https://api.line.me/v2/bot/message/reply', {
-        replyToken: replyToken,
-        messages: [{ type: 'text', text: `あなたのメッセージ: ${userMessage}` }]
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.CHANNEL_ACCESS_TOKEN}`
-        }
-      });
+      // 🎯 条件分岐でメッセージを変える
+      let replyText = `あなたのメッセージ: ${userMessage}`;
+      if (userMessage === 'こんにちは') {
+        replyText = 'こんにちは！ごきげんいかがですか？';
+      }
+
+      try {
+        await axios.post('https://api.line.me/v2/bot/message/reply', {
+          replyToken: replyToken,
+          messages: [{ type: 'text', text: replyText }]
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.CHANNEL_ACCESS_TOKEN}`
+          }
+        });
+      } catch (error) {
+        console.error('LINE返信エラー:', error.response?.data || error.message);
+      }
     }
-  });
+  }
+
   res.sendStatus(200);
 });
 
-app.get('/', (req, res) => {
-  res.send('LINE Bot is running!');
-});
-
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+const PORT = process.env.PORT || 3000;  
+app.listen(PORT, () => {
+  console.log(`サーバーがポート${PORT}で起動しました`);
 });
