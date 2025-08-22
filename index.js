@@ -1,14 +1,13 @@
 const express = require('express');
 const axios = require('axios');
 require('dotenv').config();
-const { findBestAnswer } = require('./faq');
+const { findBestAnswer } = require('./faq_search'); // ← 検索ロジックを分離
 
 const app = express();
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// 🚀 LINE Webhookエンドポイント
 app.post('/webhook', async (req, res) => {
   const events = req.body.events;
 
@@ -17,8 +16,7 @@ app.post('/webhook', async (req, res) => {
       const replyToken = event.replyToken;
       const userMessage = event.message.text;
 
-      // 🎯 類似度検索で応答文を決定
-      const replyText = findBestAnswer(userMessage);
+      const replyText = findBestAnswer(userMessage); // ← JSONベースの検索に変更
 
       try {
         await axios.post('https://api.line.me/v2/bot/message/reply', {

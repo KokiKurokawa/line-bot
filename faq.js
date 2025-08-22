@@ -122,7 +122,7 @@ function findBestAnswer(userInput) {
   });
 
   // 類似度しきい値（0.6未満はヒットなしと判定）
-  if (bestMatch.score < 0.6) {
+  if (bestMatch.score < 0.5) {
     return "自動回答では応答できなかったため、こちらから改めてお問い合わせください：info@uchiyamatsutaya.com";
   }
 
