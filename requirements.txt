@@ -1,4 +1,4 @@
 flask
 flask-cors
-sentence-transformers
 torch
+sentence-transformers==2.2.2
