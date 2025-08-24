@@ -8,7 +8,8 @@ app = Flask(__name__)
 CORS(app)
 
 # モデルのロード
-model = SentenceTransformer('all-MiniLM-L6-v2')
+#model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('paraphrase-MiniLM-L3-v2')
 
 # FAQデータの読み込み（絶対パスで安全に）
 faq_path = os.path.join(os.path.dirname(__file__), "faq_data.json")
@@ -16,7 +17,7 @@ with open(faq_path, "r", encoding="utf-8") as f:
     faq_data = json.load(f)
 
 # FAQの埋め込みを事前計算してキャッシュ
-faq_embeddings = [
+faq_embeddings = [er
     (model.encode(faq["question"], convert_to_tensor=True), faq)
     for faq in faq_data
 ]
